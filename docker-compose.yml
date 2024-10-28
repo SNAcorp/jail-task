@@ -1,0 +1,15 @@
+services:
+  jail-web:
+    build: .
+    ports:
+      - "8005:8005"
+    environment:
+      - SECRET_KEY=cokbmdfpkb
+    volumes:
+      - ./app:/app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
