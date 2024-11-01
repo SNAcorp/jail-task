@@ -34,7 +34,7 @@ async def suka(request: Request):
 @app.post("/vote", response_class=RedirectResponse)
 async def vote(choice: str = Form(...)):
     # Обновляем результаты голосования
-    if choice in votes:
+    if choice in votes.keys():
         votes[choice] += 1
     else:
         return RedirectResponse("/suka", status_code=303)
