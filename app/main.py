@@ -24,7 +24,9 @@ async def index(request: Request):
     voted = request.cookies.get("voted")
     if voted:
         return templates.TemplateResponse("voted.html", {"request": request, "message": "Вы уже проголосовали!"})
-    return templates.TemplateResponse("index.html", {"request": request, "message": "Проголосуйте"})
+    response = templates.TemplateResponse("index.html", {"request": request, "message": "Проголосуйте"})
+    response.set_cookie(key="is_site", value=serializer.dumps("1"), max_age=86400)
+    return response
 
 @app.get("/suka", response_class=HTMLResponse)
 async def suka(request: Request):
@@ -32,7 +34,9 @@ async def suka(request: Request):
 
 
 @app.post("/vote", response_class=RedirectResponse)
-async def vote(choice: str = Form(...)):
+async def vote(request: Request, choice: str = Form(...)):
+    if request.cookies.get("is_site") != "1":
+        return RedirectResponse("/suka", status_code=303)
     # Обновляем результаты голосования
     if choice in votes.keys():
         votes[choice] += 1
